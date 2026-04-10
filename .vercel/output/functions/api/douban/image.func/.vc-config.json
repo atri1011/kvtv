@@ -1,0 +1,18 @@
+{
+  "runtime": "edge",
+  "name": "api/douban/image",
+  "deploymentTarget": "v8-worker",
+  "entrypoint": "index.js",
+  "assets": [],
+  "framework": {
+    "slug": "nextjs",
+    "version": "16.1.7"
+  },
+  "environment": {
+    "__NEXT_BUILD_ID": "N8wUHNfCiydfbslmakEhd",
+    "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "YOuDyS2N806MYZ5BiL3zpagdIZcJHdf/YbygeplrDQU=",
+    "__NEXT_PREVIEW_MODE_ID": "91790ff6d45a6339c73c11f393f2ce7b",
+    "__NEXT_PREVIEW_MODE_SIGNING_KEY": "4584c94c3d9e4136afc0ccc01eb382e150412d75580594ffafd2cdf3b299a158",
+    "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "b2ddc6751737ad74810f8a5c1376512daf72fc4436699d438577db6e2ee75439"
+  }
+}
