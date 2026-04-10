@@ -13,11 +13,13 @@ interface DisplaySettingsProps {
     realtimeLatency: boolean;
     searchDisplayMode: SearchDisplayMode;
     rememberScrollPosition: boolean;
+    premiumModeEnabled?: boolean;
     locale: LocaleOption;
     blockedCategories: string[];
     onRealtimeLatencyChange: (enabled: boolean) => void;
     onSearchDisplayModeChange: (mode: SearchDisplayMode) => void;
     onRememberScrollPositionChange: (enabled: boolean) => void;
+    onPremiumModeEnabledChange?: (enabled: boolean) => void;
     onLocaleChange: (locale: LocaleOption) => void;
     onBlockedCategoriesChange: (categories: string[]) => void;
 }
@@ -26,11 +28,13 @@ export function DisplaySettings({
     realtimeLatency,
     searchDisplayMode,
     rememberScrollPosition,
+    premiumModeEnabled,
     locale,
     blockedCategories,
     onRealtimeLatencyChange,
     onSearchDisplayModeChange,
     onRememberScrollPositionChange,
+    onPremiumModeEnabledChange,
     onLocaleChange,
     onBlockedCategoriesChange,
 }: DisplaySettingsProps) {
@@ -53,6 +57,24 @@ export function DisplaySettings({
     return (
         <div className="bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-[var(--radius-2xl)] shadow-[var(--shadow-sm)] p-6 mb-6">
             <h2 className="text-xl font-semibold text-[var(--text-color)] mb-4">显示设置</h2>
+
+            {typeof premiumModeEnabled === 'boolean' && onPremiumModeEnabledChange ? (
+                <div className="mb-6">
+                    <div className="flex items-center justify-between gap-4">
+                        <div>
+                            <h3 className="font-medium text-[var(--text-color)]">开启高级模式</h3>
+                            <p className="text-sm text-[var(--text-color-secondary)] mt-1">
+                                开启后首页显示高级入口，并允许访问 /premium；关闭后隐藏入口并阻止访问高级页面
+                            </p>
+                        </div>
+                        <Switch
+                            checked={premiumModeEnabled}
+                            onChange={onPremiumModeEnabledChange}
+                            ariaLabel="开启高级模式开关"
+                        />
+                    </div>
+                </div>
+            ) : null}
 
             {/* Remember Scroll Position Toggle */}
             <div className="mb-6">

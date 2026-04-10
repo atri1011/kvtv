@@ -35,6 +35,7 @@ export function useSettingsPage() {
     const [proxyMode, setProxyMode] = useState<ProxyMode>('retry');
     const [seekStepSeconds, setSeekStepSeconds] = useState(DEFAULT_SEEK_STEP_SECONDS);
     const [rememberScrollPosition, setRememberScrollPosition] = useState(true);
+    const [premiumModeEnabled, setPremiumModeEnabled] = useState(false);
     const [locale, setLocale] = useState<LocaleOption>('zh-CN');
     const [videoTogetherEnabled, setVideoTogetherEnabled] = useState(false);
 
@@ -59,6 +60,7 @@ export function useSettingsPage() {
             setProxyMode(settings.proxyMode);
             setSeekStepSeconds(settings.seekStepSeconds);
             setRememberScrollPosition(settings.rememberScrollPosition);
+            setPremiumModeEnabled(settings.premiumModeEnabled);
             setLocale(settings.locale);
             setVideoTogetherEnabled(settings.videoTogetherEnabled);
             setDanmakuApiUrl(settings.danmakuApiUrl);
@@ -290,6 +292,15 @@ export function useSettingsPage() {
         });
     };
 
+    const handlePremiumModeEnabledChange = (enabled: boolean) => {
+        setPremiumModeEnabled(enabled);
+        const currentSettings = settingsStore.getSettings();
+        settingsStore.saveSettings({
+            ...currentSettings,
+            premiumModeEnabled: enabled,
+        });
+    };
+
     const handleVideoTogetherEnabledChange = (enabled: boolean) => {
         setVideoTogetherEnabled(enabled);
         const currentSettings = settingsStore.getSettings();
@@ -406,6 +417,8 @@ export function useSettingsPage() {
         handleSeekStepSecondsChange,
         rememberScrollPosition,
         handleRememberScrollPositionChange,
+        premiumModeEnabled,
+        handlePremiumModeEnabledChange,
         locale,
         handleLocaleChange,
         videoTogetherEnabled,

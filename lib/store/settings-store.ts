@@ -39,6 +39,7 @@ export interface AppSettings {
   sources: VideoSource[];
   premiumSources: VideoSource[];
   subscriptions: SourceSubscription[]; // Source subscriptions for auto-update
+  premiumModeEnabled: boolean;
   sortBy: SortOption;
   searchHistory: boolean;
   watchHistory: boolean;
@@ -124,6 +125,7 @@ function getDefaultAppSettings(): AppSettings {
     sources: getDefaultSources(),
     premiumSources: getDefaultPremiumSources(),
     subscriptions: getEnvSubscriptions(),
+    premiumModeEnabled: false,
     sortBy: 'default',
     searchHistory: true,
     watchHistory: true,
@@ -228,6 +230,7 @@ export const settingsStore = {
         sources: validSources,
         premiumSources: validPremiumSources,
         subscriptions: mergedSubscriptions.filter((s: any) => s && s.id && s.name && s.url),
+        premiumModeEnabled: parsed.premiumModeEnabled !== undefined ? parsed.premiumModeEnabled : false,
         sortBy: parsed.sortBy || 'default',
         searchHistory: parsed.searchHistory !== undefined ? parsed.searchHistory : true,
         watchHistory: parsed.watchHistory !== undefined ? parsed.watchHistory : true,

@@ -57,8 +57,10 @@ export default function SettingsPage() {
     handleProxyModeChange,
     handleSeekStepSecondsChange,
     rememberScrollPosition,
+    premiumModeEnabled,
     videoTogetherEnabled,
     handleRememberScrollPositionChange,
+    handlePremiumModeEnabledChange,
     handleVideoTogetherEnabledChange,
     locale,
     handleLocaleChange,
@@ -111,9 +113,11 @@ export default function SettingsPage() {
           realtimeLatency={realtimeLatency}
           searchDisplayMode={searchDisplayMode}
           rememberScrollPosition={rememberScrollPosition}
+          premiumModeEnabled={premiumModeEnabled}
           onRealtimeLatencyChange={handleRealtimeLatencyChange}
           onSearchDisplayModeChange={handleSearchDisplayModeChange}
           onRememberScrollPositionChange={handleRememberScrollPositionChange}
+          onPremiumModeEnabledChange={handlePremiumModeEnabledChange}
           locale={locale}
           onLocaleChange={handleLocaleChange}
           blockedCategories={blockedCategories}

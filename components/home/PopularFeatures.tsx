@@ -6,18 +6,22 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { TagManager } from './TagManager';
 import { MovieGrid } from './MovieGrid';
 import { useTagManager } from './hooks/useTagManager';
 import { usePopularMovies } from './hooks/usePopularMovies';
 import { usePersonalizedRecommendations } from './hooks/usePersonalizedRecommendations';
+import { usePremiumModeEnabled } from '@/lib/hooks/usePremiumModeEnabled';
+
+const PREMIUM_TAG = { id: 'premium-entry', label: '高级', value: '高级' };
 
 interface PopularFeaturesProps {
   onSearch?: (query: string) => void;
 }
 
 export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
+  const premiumModeEnabled = usePremiumModeEnabled();
   const {
     tags,
     selectedTag,
@@ -72,6 +76,11 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
     contentType
   );
 
+  const displayTags = useMemo(() => {
+    const filteredTags = tags.filter((tag) => tag.label !== '高级' && tag.id !== PREMIUM_TAG.id);
+    return premiumModeEnabled ? [PREMIUM_TAG, ...filteredTags] : filteredTags;
+  }, [premiumModeEnabled, tags]);
+
   const handleMovieClick = (movie: any) => {
     if (onSearch) {
       onSearch(movie.title);
@@ -83,7 +92,7 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
   };
 
   const handleRegularTagSelect = (tagId: string) => {
-    if (tagId === 'custom_高级' || tags.find(t => t.id === tagId)?.label === '高级') {
+    if (tagId === PREMIUM_TAG.id || tags.find(t => t.id === tagId)?.label === '高级') {
       window.location.href = '/premium';
       return;
     }
@@ -124,7 +133,7 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
       )}
 
       <TagManager
-        tags={tags}
+        tags={displayTags}
         selectedTag={effectiveRecommendSelected ? '' : selectedTag}
         showTagManager={showTagManager}
         newTagInput={newTagInput}
