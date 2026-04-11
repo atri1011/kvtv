@@ -69,6 +69,7 @@ export interface AppSettings {
   danmakuOpacity: number; // 0.1 - 1.0
   danmakuFontSize: number; // px
   danmakuDisplayArea: number; // 0.25 | 0.5 | 0.75 | 1.0
+  quarkCookie: string; // Local Quark cookie override for full playback
   locale: LocaleOption; // 'zh-CN' (Simplified) or 'zh-TW' (Traditional)
   blockedCategories: string[]; // Category keywords to hide from search results (e.g. '伦理')
 }
@@ -152,6 +153,7 @@ function getDefaultAppSettings(): AppSettings {
     danmakuOpacity: 0.7,
     danmakuFontSize: 20,
     danmakuDisplayArea: 0.5,
+    quarkCookie: '',
     locale: 'zh-CN',
     blockedCategories: [],
   };
@@ -257,6 +259,7 @@ export const settingsStore = {
         danmakuOpacity: typeof parsed.danmakuOpacity === 'number' ? parsed.danmakuOpacity : 0.7,
         danmakuFontSize: typeof parsed.danmakuFontSize === 'number' ? parsed.danmakuFontSize : 20,
         danmakuDisplayArea: typeof parsed.danmakuDisplayArea === 'number' ? parsed.danmakuDisplayArea : 0.5,
+        quarkCookie: typeof parsed.quarkCookie === 'string' ? parsed.quarkCookie : '',
         locale: parsed.locale === 'zh-TW' ? 'zh-TW' : 'zh-CN',
         blockedCategories: Array.isArray(parsed.blockedCategories) ? parsed.blockedCategories : [],
       };

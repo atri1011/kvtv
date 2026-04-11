@@ -16,6 +16,7 @@ import { useIsIOS, useIsMobile } from '@/lib/hooks/mobile/useDeviceDetection';
 import { useDoubleTap } from '@/lib/hooks/mobile/useDoubleTap';
 import { settingsStore, DEFAULT_SEEK_STEP_SECONDS } from '@/lib/store/settings-store';
 import { premiumModeSettingsStore } from '@/lib/store/premium-mode-settings';
+import type { QuarkPlaybackMode, QuarkQualityOption } from '@/lib/quark/types';
 import './web-fullscreen.css';
 
 type WebFullscreenSize = 'full' | 'large' | 'focused';
@@ -55,6 +56,7 @@ function readViewportMetrics(): ViewportMetrics {
 
 interface DesktopVideoPlayerProps {
   src: string;
+  streamType?: 'auto' | 'direct';
   poster?: string;
   onError?: (error: string) => void;
   onTimeUpdate?: (currentTime: number, duration: number) => void;
@@ -63,6 +65,11 @@ interface DesktopVideoPlayerProps {
   // Episode navigation props for auto-skip/auto-next
   totalEpisodes?: number;
   currentEpisodeIndex?: number;
+  qualityOptions?: QuarkQualityOption[];
+  currentQualityId?: string | null;
+  playbackMode?: QuarkPlaybackMode | null;
+  quarkCookieConfigured?: boolean;
+  onQualityChange?: (qualityId: string) => void;
   onNextEpisode?: () => void;
   isReversed?: boolean;
   // Danmaku props
@@ -75,6 +82,7 @@ interface DesktopVideoPlayerProps {
 
 export function DesktopVideoPlayer({
   src,
+  streamType = 'auto',
   poster,
   onError,
   onTimeUpdate,
@@ -82,6 +90,11 @@ export function DesktopVideoPlayer({
   shouldAutoPlay = false,
   totalEpisodes = 1,
   currentEpisodeIndex = 0,
+  qualityOptions = [],
+  currentQualityId = null,
+  playbackMode = null,
+  quarkCookieConfigured = false,
+  onQualityChange,
   onNextEpisode,
   isReversed = false,
   videoTitle = '',
@@ -212,6 +225,7 @@ export function DesktopVideoPlayer({
   useHlsPlayer({
     videoRef: refs.videoRef,
     src,
+    streamType,
     isPremium,
     autoPlay: shouldAutoPlay
   });
@@ -428,6 +442,11 @@ export function DesktopVideoPlayer({
             }}
             onCopyLink={logic.handleCopyLink}
             seekStepSeconds={seekStepSeconds}
+            qualityOptions={qualityOptions}
+            currentQualityId={currentQualityId}
+            playbackMode={playbackMode}
+            quarkCookieConfigured={quarkCookieConfigured}
+            onQualityChange={onQualityChange}
             // Speed Menu Props
             playbackRate={data.playbackRate}
             showSpeedMenu={data.showSpeedMenu}

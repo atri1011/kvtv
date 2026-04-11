@@ -32,6 +32,8 @@ interface PlayerSettingsProps {
     onDanmakuFontSizeChange: (value: number) => void;
     danmakuDisplayArea: number;
     onDanmakuDisplayAreaChange: (value: number) => void;
+    quarkCookie: string;
+    onQuarkCookieChange: (value: string) => void;
     showDanmakuApi?: boolean;
 }
 
@@ -61,6 +63,8 @@ export function PlayerSettings({
     onDanmakuFontSizeChange,
     danmakuDisplayArea,
     onDanmakuDisplayAreaChange,
+    quarkCookie,
+    onQuarkCookieChange,
     showDanmakuApi = true,
 }: PlayerSettingsProps) {
     const { mediaProxyEnabled, restrictionSummary } = useRuntimeFeatures();
@@ -210,6 +214,31 @@ export function PlayerSettings({
                             </div>
                         </div>
                     )}
+                </div>
+
+                <div className="border-t border-[var(--glass-border)]" />
+
+                <div>
+                    <h3 className="font-medium text-[var(--text-color)] mb-2 inline-flex items-center gap-2">
+                        <Icons.Cloud size={18} className="text-[var(--accent-color)]" />
+                        夸克网盘完整播放
+                    </h3>
+                    <p className="text-sm text-[var(--text-color-secondary)] mb-4">
+                        本地保存夸克登录 Cookie。填写后播放器会优先请求完整视频和夸克自带清晰度；留空则自动回退到预览视频。
+                    </p>
+                    <label className="block text-sm font-medium text-[var(--text-color)] mb-2">
+                        Quark Cookie
+                    </label>
+                    <textarea
+                        placeholder="__uid=...; kps=...; sign=...; vcode=...; ..."
+                        value={quarkCookie}
+                        onChange={(e) => onQuarkCookieChange(e.target.value)}
+                        spellCheck={false}
+                        className="w-full min-h-28 resize-y px-4 py-3 bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-[var(--radius-2xl)] text-[var(--text-color)] placeholder:text-[var(--text-color-secondary)]/50 focus:outline-none focus:border-[var(--accent-color)] transition-colors text-sm font-mono"
+                    />
+                    <p className="text-xs text-[var(--text-color-secondary)] mt-1.5">
+                        仅保存在当前浏览器本地，并在请求本站 `/api/quark/play` 时带上；如果服务端还配置了 `QUARK_COOKIE`，本地填写值会优先使用。
+                    </p>
                 </div>
 
                 <div className="border-t border-[var(--glass-border)]" />

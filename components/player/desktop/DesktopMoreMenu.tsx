@@ -3,7 +3,8 @@
 import React from 'react';
 import { Icons } from '@/components/ui/Icon';
 import { usePlayerSettings } from '../hooks/usePlayerSettings';
-import { settingsStore, AdFilterMode } from '@/lib/store/settings-store';
+import { AdFilterMode } from '@/lib/store/settings-store';
+import type { QuarkPlaybackMode, QuarkQualityOption } from '@/lib/quark/types';
 
 import { createPortal } from 'react-dom';
 
@@ -19,6 +20,11 @@ interface DesktopMoreMenuProps {
     onCycleWebFullscreenSize: () => void;
     containerRef: React.RefObject<HTMLDivElement | null>;
     isRotated?: boolean;
+    qualityOptions: QuarkQualityOption[];
+    currentQualityId: string | null;
+    playbackMode: QuarkPlaybackMode | null;
+    quarkCookieConfigured: boolean;
+    onQualityChange?: (qualityId: string) => void;
 }
 
 export function DesktopMoreMenu({
@@ -32,7 +38,12 @@ export function DesktopMoreMenu({
     webFullscreenSize,
     onCycleWebFullscreenSize,
     containerRef,
-    isRotated = false
+    isRotated = false,
+    qualityOptions,
+    currentQualityId,
+    playbackMode,
+    quarkCookieConfigured,
+    onQualityChange,
 }: DesktopMoreMenuProps) {
     const {
         autoNextEpisode,
@@ -68,6 +79,7 @@ export function DesktopMoreMenu({
     const menuRef = React.useRef<HTMLDivElement>(null);
     const [menuPosition, setMenuPosition] = React.useState({ top: 0, left: 0, maxHeight: 'none', openUpward: false, align: 'right' as 'left' | 'right' });
     const [isAdFilterOpen, setAdFilterOpen] = React.useState(false);
+    const [isQualityOpen, setQualityOpen] = React.useState(false);
 
     const AD_FILTER_LABELS: Record<string, string> = {
         off: '关闭',
@@ -80,6 +92,12 @@ export function DesktopMoreMenu({
         large: '大窗模式',
         focused: '聚焦影院',
     };
+    const playbackModeLabel = playbackMode === 'full'
+        ? '完整视频'
+        : quarkCookieConfigured
+            ? '预览回退'
+            : '预览视频';
+    const currentQualityLabel = qualityOptions.find((option) => option.id === currentQualityId)?.label || '默认';
 
     const [isFullscreen, setIsFullscreen] = React.useState(false);
 
@@ -330,6 +348,55 @@ export function DesktopMoreMenu({
                     <span>复制链接</span>
                 </button>
             )}
+
+            {qualityOptions.length > 0 && onQualityChange ? (
+                <>
+                    <div className="h-px bg-[var(--glass-border)] my-1.5 sm:my-2" />
+
+                    <div className={`${isRotated ? 'px-2 py-1.5' : 'px-3 py-2 sm:px-4 sm:py-2.5'} flex items-center justify-between gap-4`}>
+                        <div className={`flex items-center gap-2 text-[var(--text-color)] ${isRotated ? 'text-[11px]' : 'text-xs sm:text-sm'}`}>
+                            <Icons.Tag size={isRotated ? 14 : 16} className="sm:w-[18px] sm:h-[18px]" />
+                            <div className="flex flex-col gap-0.5">
+                                <span>夸克清晰度</span>
+                                <span className={`${isRotated ? 'text-[9px]' : 'text-[10px] sm:text-xs'} text-[var(--text-color-secondary)]`}>
+                                    {playbackModeLabel}
+                                </span>
+                            </div>
+                        </div>
+                        <div className="relative">
+                            <button
+                                onClick={() => setQualityOpen(!isQualityOpen)}
+                                className={`flex items-center gap-1 bg-[var(--glass-bg)] border border-[var(--glass-border)] text-[var(--text-color)] rounded-[var(--radius-2xl)] outline-none hover:border-[var(--accent-color)] hover:bg-[color-mix(in_srgb,var(--accent-color)_5%,transparent)] transition-all cursor-pointer whitespace-nowrap ${isRotated ? 'px-1.5 py-0.5 text-[9px]' : 'px-2 sm:px-2.5 py-1 sm:py-1.5 text-[10px] sm:text-xs'}`}
+                            >
+                                <span>{currentQualityLabel}</span>
+                                <Icons.ChevronDown size={isRotated ? 10 : 12} className={`text-[var(--text-color-secondary)] transition-transform duration-300 ${isQualityOpen ? 'rotate-180' : ''}`} />
+                            </button>
+
+                            {isQualityOpen && (
+                                <>
+                                    <div className="fixed inset-0 z-10 cursor-default" onClick={() => setQualityOpen(false)} />
+                                    <div className="absolute right-0 top-full mt-2 w-28 sm:w-32 bg-[var(--glass-bg)] backdrop-blur-[25px] saturate-[180%] border border-[var(--glass-border)] rounded-[var(--radius-2xl)] shadow-[var(--shadow-md)] p-1 overflow-hidden z-20 flex flex-col animate-in fade-in zoom-in-95 duration-200">
+                                        {qualityOptions.map((option) => (
+                                            <button
+                                                key={option.id}
+                                                onClick={() => {
+                                                    onQualityChange(option.id);
+                                                    setQualityOpen(false);
+                                                }}
+                                                className={`text-left text-[10px] sm:text-xs px-2 sm:px-3 py-1.5 sm:py-2 rounded-[var(--radius-2xl)] hover:bg-[color-mix(in_srgb,var(--accent-color)_15%,transparent)] transition-colors w-full flex items-center justify-between group ${currentQualityId === option.id ? 'text-[var(--accent-color)] font-medium bg-[color-mix(in_srgb,var(--accent-color)_5%,transparent)]' : 'text-[var(--text-color)]'
+                                                    }`}
+                                            >
+                                                <span>{option.label}</span>
+                                                {currentQualityId === option.id && <Icons.Check size={10} className="sm:w-[12px] sm:h-[12px] text-[var(--accent-color)]" />}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                </>
+            ) : null}
 
             {/* Divider */}
             <div className="h-px bg-[var(--glass-border)] my-1.5 sm:my-2" />

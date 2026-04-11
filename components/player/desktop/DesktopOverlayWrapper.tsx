@@ -1,6 +1,7 @@
 import React from 'react';
 import { DesktopOverlay } from './DesktopOverlay';
 import { useDesktopPlayerState } from '../hooks/useDesktopPlayerState';
+import type { QuarkPlaybackMode, QuarkQualityOption } from '@/lib/quark/types';
 
 interface DesktopOverlayWrapperProps {
     data: ReturnType<typeof useDesktopPlayerState>['data'];
@@ -20,6 +21,11 @@ interface DesktopOverlayWrapperProps {
     onMoreMenuMouseLeave: () => void;
     onCopyLink: (type?: 'original' | 'proxy') => void;
     seekStepSeconds: number;
+    qualityOptions: QuarkQualityOption[];
+    currentQualityId: string | null;
+    playbackMode: QuarkPlaybackMode | null;
+    quarkCookieConfigured: boolean;
+    onQualityChange?: (qualityId: string) => void;
     // Speed Menu Props
     playbackRate: number;
     showSpeedMenu: boolean;
@@ -51,6 +57,11 @@ export function DesktopOverlayWrapper({
     onMoreMenuMouseLeave,
     onCopyLink,
     seekStepSeconds,
+    qualityOptions,
+    currentQualityId,
+    playbackMode,
+    quarkCookieConfigured,
+    onQualityChange,
     playbackRate,
     showSpeedMenu,
     speeds,
@@ -102,6 +113,11 @@ export function DesktopOverlayWrapper({
             onMoreMenuMouseLeave={onMoreMenuMouseLeave}
             onCopyLink={onCopyLink}
             seekStepSeconds={seekStepSeconds}
+            qualityOptions={qualityOptions}
+            currentQualityId={currentQualityId}
+            playbackMode={playbackMode}
+            quarkCookieConfigured={quarkCookieConfigured}
+            onQualityChange={onQualityChange}
             playbackRate={playbackRate}
             showSpeedMenu={showSpeedMenu}
             speeds={speeds}

@@ -1,10 +1,12 @@
 'use client';
 
 import { DesktopVideoPlayer } from './DesktopVideoPlayer';
+import type { QuarkPlaybackMode, QuarkQualityOption } from '@/lib/quark/types';
 
 
 interface CustomVideoPlayerProps {
   src: string;
+  streamType?: 'auto' | 'direct';
   poster?: string;
   onError?: (error: string) => void;
   onTimeUpdate?: (currentTime: number, duration: number) => void;
@@ -13,6 +15,11 @@ interface CustomVideoPlayerProps {
   // Episode navigation props for auto-skip/auto-next
   totalEpisodes?: number;
   currentEpisodeIndex?: number;
+  qualityOptions?: QuarkQualityOption[];
+  currentQualityId?: string | null;
+  playbackMode?: QuarkPlaybackMode | null;
+  quarkCookieConfigured?: boolean;
+  onQualityChange?: (qualityId: string) => void;
   onNextEpisode?: () => void;
   isReversed?: boolean;
   // Danmaku props

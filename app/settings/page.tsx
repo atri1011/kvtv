@@ -72,6 +72,8 @@ export default function SettingsPage() {
     handleDanmakuFontSizeChange,
     danmakuDisplayArea,
     handleDanmakuDisplayAreaChange,
+    quarkCookie,
+    handleQuarkCookieChange,
     blockedCategories,
     handleBlockedCategoriesChange,
   } = useSettingsPage();
@@ -104,6 +106,8 @@ export default function SettingsPage() {
             onDanmakuFontSizeChange={handleDanmakuFontSizeChange}
             danmakuDisplayArea={danmakuDisplayArea}
             onDanmakuDisplayAreaChange={handleDanmakuDisplayAreaChange}
+            quarkCookie={quarkCookie}
+            onQuarkCookieChange={handleQuarkCookieChange}
             showDanmakuApi={hasPermission('danmaku_api')}
           />
         </PermissionGate>

@@ -37,15 +37,19 @@ export function parseQuarkShareUrl(input: string): QuarkShareReference | null {
   const dirIdMatch = url.hash.match(/\/list\/share\/([0-9a-f]{32})/i);
   const shareId = shareIdMatch[1];
   const dirId = dirIdMatch?.[1] ?? '0';
-  const normalizedUrl = dirId === '0'
-    ? `https://pan.quark.cn/s/${shareId}`
-    : `https://pan.quark.cn/s/${shareId}#/list/share/${dirId}`;
+  const normalizedUrl = buildQuarkShareUrl(shareId, dirId);
 
   return {
     shareId,
     dirId,
     normalizedUrl,
   };
+}
+
+export function buildQuarkShareUrl(shareId: string, dirId: string = '0'): string {
+  return dirId === '0'
+    ? `https://pan.quark.cn/s/${shareId}`
+    : `https://pan.quark.cn/s/${shareId}#/list/share/${dirId}`;
 }
 
 export function buildQuarkPlayerHref(input: string, isPremium = false): string | null {

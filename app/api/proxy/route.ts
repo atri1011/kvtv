@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { processM3u8Content } from '@/lib/utils/proxy-utils';
 import { fetchWithRetry } from '@/lib/utils/fetch-with-retry';
 import { getRuntimeFeatures } from '@/lib/server/runtime-features';
+import { QUARK_PROXY_COOKIE_NAME } from '@/lib/quark/browser-cookie';
 
 export const runtime = 'edge';
 
@@ -31,12 +32,25 @@ export async function GET(request: NextRequest) {
     try {
         // Extract headers to forward (only essential ones)
         const requestHeaders: Record<string, string> = {};
-        const forwardHeaders = ['cookie', 'range'];
+        const range = request.headers.get('range');
+        if (range) {
+            requestHeaders.range = range;
+        }
 
-        forwardHeaders.forEach(key => {
-            const value = request.headers.get(key);
-            if (value) requestHeaders[key] = value;
-        });
+        const targetHost = (() => {
+            try {
+                return new URL(url).hostname;
+            } catch {
+                return '';
+            }
+        })();
+
+        if (targetHost.includes('quark.cn')) {
+            const localQuarkCookie = request.cookies.get(QUARK_PROXY_COOKIE_NAME)?.value;
+            if (localQuarkCookie) {
+                requestHeaders.cookie = decodeURIComponent(localQuarkCookie);
+            }
+        }
 
         const response = await fetchWithRetry({ url, request, headers: requestHeaders });
 

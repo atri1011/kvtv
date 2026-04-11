@@ -46,6 +46,8 @@ export default function PremiumSettingsPage() {
         handleDanmakuFontSizeChange,
         danmakuDisplayArea,
         handleDanmakuDisplayAreaChange,
+        quarkCookie,
+        handleQuarkCookieChange,
         blockedCategories,
         handleBlockedCategoriesChange,
     } = usePremiumSettingsPage();
@@ -91,6 +93,8 @@ export default function PremiumSettingsPage() {
                     onDanmakuFontSizeChange={handleDanmakuFontSizeChange}
                     danmakuDisplayArea={danmakuDisplayArea}
                     onDanmakuDisplayAreaChange={handleDanmakuDisplayAreaChange}
+                    quarkCookie={quarkCookie}
+                    onQuarkCookieChange={handleQuarkCookieChange}
                 />
 
                 {/* Display Settings */}

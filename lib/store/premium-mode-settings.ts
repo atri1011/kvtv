@@ -37,6 +37,7 @@ export interface ModeSettings {
   danmakuOpacity: number;
   danmakuFontSize: number;
   danmakuDisplayArea: number;
+  quarkCookie: string;
 }
 
 function getDefaultModeSettings(): ModeSettings {
@@ -62,6 +63,7 @@ function getDefaultModeSettings(): ModeSettings {
     danmakuOpacity: 0.7,
     danmakuFontSize: 20,
     danmakuDisplayArea: 0.5,
+    quarkCookie: '',
   };
 }
 
@@ -100,6 +102,7 @@ export const premiumModeSettingsStore = {
         danmakuOpacity: typeof parsed.danmakuOpacity === 'number' ? parsed.danmakuOpacity : 0.7,
         danmakuFontSize: typeof parsed.danmakuFontSize === 'number' ? parsed.danmakuFontSize : 20,
         danmakuDisplayArea: typeof parsed.danmakuDisplayArea === 'number' ? parsed.danmakuDisplayArea : 0.5,
+        quarkCookie: typeof parsed.quarkCookie === 'string' ? parsed.quarkCookie : '',
       };
     } catch {
       return getDefaultModeSettings();
@@ -161,6 +164,7 @@ export function getModeSettings(isPremium: boolean): ModeSettings {
     danmakuOpacity: s.danmakuOpacity,
     danmakuFontSize: s.danmakuFontSize,
     danmakuDisplayArea: s.danmakuDisplayArea,
+    quarkCookie: s.quarkCookie,
   };
 }
 

@@ -8,11 +8,17 @@ import { CustomVideoPlayer } from './CustomVideoPlayer';
 import { VideoPlayerError } from './VideoPlayerError';
 import { VideoPlayerEmpty } from './VideoPlayerEmpty';
 import { usePlayerSettings } from './hooks/usePlayerSettings';
+import type { QuarkPlaybackMode, QuarkQualityOption } from '@/lib/quark/types';
 
 interface VideoPlayerProps {
   playUrl: string;
   videoId?: string;
   currentEpisode: number;
+  qualityOptions?: QuarkQualityOption[];
+  currentQualityId?: string | null;
+  playbackMode?: QuarkPlaybackMode | null;
+  quarkCookieConfigured?: boolean;
+  onQualityChange?: (qualityId: string) => void;
   onBack: () => void;
   // Episode navigation props for auto-skip/auto-next
   totalEpisodes?: number;
@@ -32,6 +38,11 @@ export function VideoPlayer({
   playUrl,
   videoId,
   currentEpisode,
+  qualityOptions = [],
+  currentQualityId = null,
+  playbackMode = null,
+  quarkCookieConfigured = false,
+  onQualityChange,
   onBack,
   totalEpisodes,
   onNextEpisode,
@@ -50,6 +61,9 @@ export function VideoPlayer({
   const lastSaveTimeRef = useRef(0);
   const currentTimeRef = useRef(0);
   const durationRef = useRef(0);
+  const lastPlayUrlRef = useRef(playUrl);
+  const lastEpisodeRef = useRef(currentEpisode);
+  const [resumeTimeOverride, setResumeTimeOverride] = useState<number | null>(null);
   const SAVE_INTERVAL = 5000; // 5 seconds throttle
 
   const { showModeIndicator, proxyMode } = usePlayerSettings(isPremium);
@@ -64,6 +78,7 @@ export function VideoPlayer({
   // Get video metadata from URL params
   const source = searchParams.get('source') || '';
   const title = searchParams.get('title') || '未知视频';
+  const isQuarkSource = source === 'quark-share';
 
   // Get saved progress for this video
   const getSavedProgress = () => {
@@ -133,6 +148,26 @@ export function VideoPlayer({
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [saveProgress]);
 
+  useEffect(() => {
+    const previousUrl = lastPlayUrlRef.current;
+    const previousEpisode = lastEpisodeRef.current;
+
+    if (previousUrl && previousUrl !== playUrl) {
+      if (previousEpisode === currentEpisode && currentTimeRef.current > 1 && durationRef.current > 0) {
+        saveProgress(currentTimeRef.current, durationRef.current);
+        setResumeTimeOverride(currentTimeRef.current);
+      } else {
+        setResumeTimeOverride(null);
+      }
+
+      setVideoError('');
+      setShouldAutoPlay(true);
+    }
+
+    lastPlayUrlRef.current = playUrl;
+    lastEpisodeRef.current = currentEpisode;
+  }, [playUrl, currentEpisode, saveProgress]);
+
   // Handle video errors
   const handleVideoError = (error: string) => {
     console.error('Video playback error:', error);
@@ -172,9 +207,11 @@ export function VideoPlayer({
     setUseProxy(prev => proxyMode === 'none' ? false : !prev);
   };
 
-  const finalPlayUrl = effectiveUseProxy
-    ? `/api/proxy?url=${encodeURIComponent(playUrl)}&retry=${retryCount}` // Add retry param to force fresh request
-    : playUrl;
+  const finalPlayUrl = isQuarkSource
+    ? `/api/proxy?url=${encodeURIComponent(playUrl)}&referer=${encodeURIComponent('https://pan.quark.cn/')}&retry=${retryCount}`
+    : effectiveUseProxy
+      ? `/api/proxy?url=${encodeURIComponent(playUrl)}&retry=${retryCount}` // Add retry param to force fresh request
+      : playUrl;
 
   if (!playUrl) {
     return <VideoPlayerEmpty />;
@@ -204,14 +241,20 @@ export function VideoPlayer({
         />
       ) : (
         <CustomVideoPlayer
-          key={`${effectiveUseProxy ? 'proxy' : 'direct'}-${retryCount}-${source}`} // Remount when switching sources, modes, or retrying
+          key={`${effectiveUseProxy ? 'proxy' : 'direct'}-${retryCount}-${source}-${playUrl}`} // Remount when switching stream quality or retrying
           src={finalPlayUrl}
+          streamType={isQuarkSource ? 'direct' : 'auto'}
           onError={handleVideoError}
           onTimeUpdate={handleTimeUpdate}
-          initialTime={getSavedProgress()}
+          initialTime={resumeTimeOverride ?? getSavedProgress()}
           shouldAutoPlay={shouldAutoPlay}
           totalEpisodes={totalEpisodes}
           currentEpisodeIndex={currentEpisode}
+          qualityOptions={qualityOptions}
+          currentQualityId={currentQualityId}
+          playbackMode={playbackMode}
+          quarkCookieConfigured={quarkCookieConfigured}
+          onQualityChange={onQualityChange}
           onNextEpisode={onNextEpisode}
           isReversed={isReversed}
           videoTitle={videoTitle}

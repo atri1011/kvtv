@@ -44,6 +44,7 @@ export function useSettingsPage() {
     const [danmakuOpacity, setDanmakuOpacity] = useState(0.7);
     const [danmakuFontSize, setDanmakuFontSize] = useState(20);
     const [danmakuDisplayArea, setDanmakuDisplayArea] = useState(0.5);
+    const [quarkCookie, setQuarkCookie] = useState('');
 
     // Content filter
     const [blockedCategories, setBlockedCategories] = useState<string[]>([]);
@@ -67,6 +68,7 @@ export function useSettingsPage() {
             setDanmakuOpacity(settings.danmakuOpacity);
             setDanmakuFontSize(settings.danmakuFontSize);
             setDanmakuDisplayArea(settings.danmakuDisplayArea);
+            setQuarkCookie(settings.quarkCookie);
             setBlockedCategories(settings.blockedCategories || []);
         };
 
@@ -356,6 +358,15 @@ export function useSettingsPage() {
         });
     };
 
+    const handleQuarkCookieChange = (value: string) => {
+        setQuarkCookie(value);
+        const currentSettings = settingsStore.getSettings();
+        settingsStore.saveSettings({
+            ...currentSettings,
+            quarkCookie: value,
+        });
+    };
+
     const handleBlockedCategoriesChange = (categories: string[]) => {
         setBlockedCategories(categories);
         const currentSettings = settingsStore.getSettings();
@@ -431,6 +442,8 @@ export function useSettingsPage() {
         handleDanmakuFontSizeChange,
         danmakuDisplayArea,
         handleDanmakuDisplayAreaChange,
+        quarkCookie,
+        handleQuarkCookieChange,
         blockedCategories,
         handleBlockedCategoriesChange,
     };

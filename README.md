@@ -478,6 +478,30 @@ docker run -d -p 3000:3000 \
 
 > 用户还可以在设置页面的「弹幕 API」区域添加多个 API 端点并选择当前使用的，用户选择的 API 优先于系统默认配置。
 
+## 夸克网盘完整播放配置
+
+KVideo 支持直接粘贴夸克分享链接播放：
+
+- 未配置任何 Cookie 时，自动回退到夸克预览视频
+- 在设置页填写 Quark Cookie，或由服务端配置 `QUARK_COOKIE` 后，自动解析完整视频，并在播放器「更多选项」里显示夸克清晰度切换
+
+> 优先级：**设置页本地 Cookie > 服务端 `QUARK_COOKIE`**。完整播放仍受夸克账号状态、分享有效期和风控策略影响。
+
+| 变量名 | 说明 | 默认值 |
+|--------|------|--------|
+| `QUARK_COOKIE` | 夸克网盘登录 Cookie，用于解析完整视频与清晰度列表 | - |
+
+设置页入口：`/settings` 或 `/premium/settings` → **播放器设置** → **夸克网盘完整播放**
+
+**示例：**
+
+```bash
+# Docker
+docker run -d -p 3000:3000 \
+  -e QUARK_COOKIE='__uid=...; kps=...; sign=...; vcode=...; ...' \
+  --name kvideo kuekhaoyang/kvideo:latest
+```
+
 ## 一起看 (VideoTogether) 配置
 
 播放器页面和 IPTV 页面支持集成 [VideoTogether](https://videotogether.github.io/zh-cn/guide/website.html) 官方网页脚本。应用内默认关闭，用户可在设置页手动开启；开启后仅在播放器和 IPTV 页面显示，并默认折叠为小图标。
@@ -640,6 +664,7 @@ docker run -e PORT=8080 -p 8080:8080 --name kvideo kuekhaoyang/kvideo:latest
 | `MERGE_SOURCES` / `NEXT_PUBLIC_MERGE_SOURCES` | 启用合并同名源显示（`true`/`1`） | - |
 | `AD_KEYWORDS` / `NEXT_PUBLIC_AD_KEYWORDS` | 广告过滤关键词 | - |
 | `AD_KEYWORDS_FILE` | 广告关键词文件路径 | - |
+| `QUARK_COOKIE` | 夸克网盘登录 Cookie（启用完整播放与清晰度切换） | - |
 | `DANMAKU_API_URL` / `NEXT_PUBLIC_DANMAKU_API_URL` | 弹幕聚合 API 地址 | - |
 | `VIDEOTOGETHER_ENABLED` | 是否允许 VideoTogether 一起看集成（`false` 时关闭） | `true` |
 | `VIDEOTOGETHER_SCRIPT_URL` | VideoTogether 脚本地址 | `https://fastly.jsdelivr.net/gh/VideoTogether/VideoTogether@latest/release/extension.website.user.js` |
@@ -738,6 +763,7 @@ docker run -d -p 3000:3000 \
   -e ACCOUNTS="user1:用户一:admin,user2:用户二:viewer:iptv_access" \
   -e NEXT_PUBLIC_SITE_NAME="我的视频" \
   -e NEXT_PUBLIC_DANMAKU_API_URL="https://danmaku.example.com" \
+  -e QUARK_COOKIE='__uid=...; kps=...; sign=...; vcode=...; ...' \
   -e SUBSCRIPTION_SOURCES='[{"name":"默认源","url":"https://example.com/sources.json"}]' \
   -e IPTV_SOURCES='[{"name":"央视","url":"https://example.com/cctv.m3u"}]' \
   -e MERGE_SOURCES=true \

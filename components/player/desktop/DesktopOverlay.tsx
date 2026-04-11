@@ -3,6 +3,7 @@ import { Icons } from '@/components/ui/Icon';
 
 import { DesktopMoreMenu } from './DesktopMoreMenu';
 import { DesktopSpeedMenu } from './DesktopSpeedMenu';
+import type { QuarkPlaybackMode, QuarkQualityOption } from '@/lib/quark/types';
 
 interface DesktopOverlayProps {
     isLoading: boolean;
@@ -30,6 +31,11 @@ interface DesktopOverlayProps {
     onMoreMenuMouseLeave: () => void;
     onCopyLink: (type?: 'original' | 'proxy') => void;
     seekStepSeconds: number;
+    qualityOptions: QuarkQualityOption[];
+    currentQualityId: string | null;
+    playbackMode: QuarkPlaybackMode | null;
+    quarkCookieConfigured: boolean;
+    onQualityChange?: (qualityId: string) => void;
     // Speed Menu Props
     playbackRate: number;
     showSpeedMenu: boolean;
@@ -70,6 +76,11 @@ export function DesktopOverlay({
     onMoreMenuMouseLeave,
     onCopyLink,
     seekStepSeconds,
+    qualityOptions,
+    currentQualityId,
+    playbackMode,
+    quarkCookieConfigured,
+    onQualityChange,
     playbackRate,
     showSpeedMenu,
     speeds,
@@ -102,6 +113,11 @@ export function DesktopOverlay({
                     onCycleWebFullscreenSize={onCycleWebFullscreenSize}
                     containerRef={containerRef}
                     isRotated={isRotated}
+                    qualityOptions={qualityOptions}
+                    currentQualityId={currentQualityId}
+                    playbackMode={playbackMode}
+                    quarkCookieConfigured={quarkCookieConfigured}
+                    onQualityChange={onQualityChange}
                 />
             </div>
 

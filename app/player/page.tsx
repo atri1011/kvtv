@@ -104,11 +104,16 @@ function PlayerContent() {
     videoError,
     currentEpisode,
     playUrl,
+    qualityOptions,
+    currentQualityId,
+    playbackMode,
+    quarkCookieConfigured,
     setCurrentEpisode,
     setPlayUrl,
     setVideoError,
+    changeQuality,
     fetchVideoDetails,
-  } = useVideoPlayer(videoId, source, episodeParam, isReversed, useCallback(() => {
+  } = useVideoPlayer(videoId, source, episodeParam, isPremium, isReversed, useCallback(() => {
     sourceUnavailableRef.current?.();
   }, []));
 
@@ -420,6 +425,11 @@ function PlayerContent() {
                 playUrl={playUrl}
                 videoId={videoId || undefined}
                 currentEpisode={currentEpisode}
+                qualityOptions={qualityOptions}
+                currentQualityId={currentQualityId}
+                playbackMode={playbackMode}
+                quarkCookieConfigured={quarkCookieConfigured}
+                onQualityChange={changeQuality}
                 onBack={() => router.back()}
                 totalEpisodes={videoData?.episodes?.length || 0}
                 onNextEpisode={handleNextEpisode}

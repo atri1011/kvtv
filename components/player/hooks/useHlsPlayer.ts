@@ -7,6 +7,7 @@ import { useRuntimeFeatures } from '@/components/RuntimeFeaturesProvider';
 interface UseHlsPlayerProps {
     videoRef: React.RefObject<HTMLVideoElement | null>;
     src: string;
+    streamType?: 'auto' | 'direct';
     isPremium?: boolean;
     autoPlay?: boolean;
     onAutoPlayPrevented?: (error: Error) => void;
@@ -16,6 +17,7 @@ interface UseHlsPlayerProps {
 export function useHlsPlayer({
     videoRef,
     src,
+    streamType = 'auto',
     isPremium = false,
     autoPlay = false,
     onAutoPlayPrevented,
@@ -44,6 +46,30 @@ export function useHlsPlayer({
 
         // Check if MSE is available (required by HLS.js)
         const isMSESupported = Hls.isSupported();
+
+        if (streamType === 'direct') {
+            video.src = src;
+
+            const handleCanPlay = () => {
+                if (autoPlay) {
+                    video.play().catch((err) => {
+                        onAutoPlayPrevented?.(err);
+                    });
+                }
+            };
+
+            const handleError = () => {
+                onError?.('Video failed to load');
+            };
+
+            video.addEventListener('canplay', handleCanPlay, { once: true });
+            video.addEventListener('error', handleError, { once: true });
+
+            return () => {
+                video.removeEventListener('canplay', handleCanPlay);
+                video.removeEventListener('error', handleError);
+            };
+        }
 
         if (isMSESupported) {
 
@@ -424,5 +450,5 @@ export function useHlsPlayer({
             }
             extraBlobs.forEach(url => URL.revokeObjectURL(url));
         };
-    }, [src, videoRef, autoPlay, onAutoPlayPrevented, onError, isAdFilterEnabled, adFilterMode, adKeywords, mediaProxyEnabled]);
+    }, [src, streamType, videoRef, autoPlay, onAutoPlayPrevented, onError, isAdFilterEnabled, adFilterMode, adKeywords, mediaProxyEnabled]);
 }
