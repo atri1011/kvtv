@@ -38,6 +38,7 @@ export function getSourceName(sourceId: string): string {
     'feifan1': '非凡线路1',
     'moduzy': '魔都影视',
     'leba': '乐播资源',
+    'quark-share': '夸克网盘',
   };
   return sourceNames[sourceId] || sourceId;
 }
@@ -49,5 +50,5 @@ export const SOURCE_IDS = [
   'guangsu2', 'youku', 'yilingba', 'huya', 'xinlang', 'ikun',
   'lezi', 'xinlang2', 'yilingba2', 'baofeng2', 'wolong2', 'lezi2',
   'feifan', 'aidan', 'feifanapi', 'feifancj', 'feifancj2', 'feifan1',
-  'moduzy', 'leba'
+  'moduzy', 'leba', 'quark-share'
 ];

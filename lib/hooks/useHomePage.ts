@@ -5,6 +5,7 @@ import { useParallelSearch } from '@/lib/hooks/useParallelSearch';
 import { useSubscriptionSync } from '@/lib/hooks/useSubscriptionSync';
 import { settingsStore, type SortOption } from '@/lib/store/settings-store';
 import { userSourcesStore } from '@/lib/store/user-sources-store';
+import { buildQuarkPlayerHref } from '@/lib/quark/share-link';
 
 export function useHomePage() {
     useSubscriptionSync();
@@ -113,6 +114,12 @@ export function useHomePage() {
     const handleSearch = useCallback((searchQuery: string) => {
         if (!searchQuery.trim()) return;
 
+        const quarkPlayerHref = buildQuarkPlayerHref(searchQuery);
+        if (quarkPlayerHref) {
+            router.push(quarkPlayerHref);
+            return;
+        }
+
         // Clear scroll position for this search query to ensure we start at the top on a fresh search
         const scrollKey = `scroll-pos:/?q=${encodeURIComponent(searchQuery)}`;
         sessionStorage.removeItem(scrollKey);
@@ -123,7 +130,7 @@ export function useHomePage() {
         setQuery(searchQuery);
         setHasSearched(true);
         executeSearch(searchQuery);
-    }, [executeSearch]);
+    }, [executeSearch, router]);
 
     // Load cached results on mount
     useEffect(() => {

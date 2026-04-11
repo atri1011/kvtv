@@ -1,10 +1,11 @@
-import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSearchCache } from '@/lib/hooks/useSearchCache';
 import { useParallelSearch } from '@/lib/hooks/useParallelSearch';
 import { useSubscriptionSync } from '@/lib/hooks/useSubscriptionSync';
 import { settingsStore } from '@/lib/store/settings-store';
 import { VideoSource } from '@/lib/types';
+import { buildQuarkPlayerHref } from '@/lib/quark/share-link';
 
 export function usePremiumHomePage() {
     useSubscriptionSync();
@@ -120,6 +121,12 @@ export function usePremiumHomePage() {
     }, [searchParams]);
 
     const handleSearch = (searchQuery: string) => {
+        const quarkPlayerHref = buildQuarkPlayerHref(searchQuery, true);
+        if (quarkPlayerHref) {
+            router.push(quarkPlayerHref);
+            return;
+        }
+
         setQuery(searchQuery);
         setHasSearched(true);
         // Use current state of sources

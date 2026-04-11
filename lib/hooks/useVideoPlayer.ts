@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { settingsStore } from '@/lib/store/settings-store';
+import { QUARK_SHARE_SOURCE_ID } from '@/lib/quark/share-link';
 
 interface VideoData {
   vod_id: string;
@@ -73,24 +74,33 @@ export function useVideoPlayer(
       setVideoError('');
       setLoading(true);
 
-      const settings = settingsStore.getSettings();
-      const allSources = [
-        ...settings.sources,
-        ...settings.premiumSources,
-        ...settings.subscriptions,
-      ];
-
-      const sourceConfig = allSources.find(s => s.id === source);
       let response;
 
-      if (sourceConfig) {
-        response = await fetch('/api/detail', {
+      if (source === QUARK_SHARE_SOURCE_ID) {
+        response = await fetch('/api/quark/detail', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: videoId, source: sourceConfig })
+          body: JSON.stringify({ url: videoId }),
         });
       } else {
-        response = await fetch(`/api/detail?id=${videoId}&source=${source}`);
+        const settings = settingsStore.getSettings();
+        const allSources = [
+          ...settings.sources,
+          ...settings.premiumSources,
+          ...settings.subscriptions,
+        ];
+
+        const sourceConfig = allSources.find(s => s.id === source);
+
+        if (sourceConfig) {
+          response = await fetch('/api/detail', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: videoId, source: sourceConfig })
+          });
+        } else {
+          response = await fetch(`/api/detail?id=${videoId}&source=${source}`);
+        }
       }
 
       const data = await response.json();
@@ -140,7 +150,7 @@ export function useVideoPlayer(
 
   // EFFECT: Retry logic when settings change (e.g., sources loaded from subscriptions)
   useEffect(() => {
-    if (!videoId || !source || !videoError) return;
+    if (!videoId || !source || !videoError || source === QUARK_SHARE_SOURCE_ID) return;
 
     const unsubscribe = settingsStore.subscribe(() => {
       // If we are currently in an error state (likely "Invalid source configuration"),
