@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { getSession, setSession } from '@/lib/store/auth-store';
 import { useSubscriptionSync } from '@/lib/hooks/useSubscriptionSync';
-import { hasStoredAppSetting, settingsStore } from '@/lib/store/settings-store';
+import { settingsStore } from '@/lib/store/settings-store';
 import { useIPTVStore } from '@/lib/store/iptv-store';
 import { Lock } from 'lucide-react';
 
@@ -54,9 +54,12 @@ function syncMergeSources(rawValue: string) {
 }
 
 function syncDanmakuApiUrl(rawValue: string) {
-    if (!rawValue || hasStoredAppSetting('danmakuApiUrl')) return;
+    if (!rawValue) return;
 
     const settings = settingsStore.getSettings();
+    // Skip only if user explicitly set a non-empty, different value
+    if (settings.danmakuApiUrl && settings.danmakuApiUrl !== rawValue) return;
+
     if (settings.danmakuApiUrl !== rawValue) {
         settingsStore.saveSettings({
             ...settings,
