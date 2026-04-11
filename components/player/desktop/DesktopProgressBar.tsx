@@ -2,13 +2,14 @@ import React, { RefObject } from 'react';
 
 interface DesktopProgressBarProps {
     progressBarRef: RefObject<HTMLDivElement | null>;
-
     currentTime: number;
     duration: number;
     bufferedTime: number;
     onProgressClick: (e: React.MouseEvent<HTMLDivElement>) => void;
     onProgressMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
     onProgressTouchStart: (e: React.TouchEvent<HTMLDivElement>) => void;
+    variant?: 'default' | 'mobile-primary';
+    className?: string;
 }
 
 export function DesktopProgressBar({
@@ -18,13 +19,15 @@ export function DesktopProgressBar({
     bufferedTime,
     onProgressClick,
     onProgressMouseDown,
-    onProgressTouchStart
+    onProgressTouchStart,
+    variant = 'default',
+    className = 'px-4 pb-1'
 }: DesktopProgressBarProps) {
     return (
-        <div className="px-4 pb-1">
+        <div className={className}>
             <div
                 ref={progressBarRef}
-                className="slider-track cursor-pointer"
+                className={`slider-track cursor-pointer ${variant === 'mobile-primary' ? 'mobile-primary' : ''}`}
                 onClick={onProgressClick}
                 onMouseDown={onProgressMouseDown}
                 onTouchStart={onProgressTouchStart}

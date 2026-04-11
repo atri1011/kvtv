@@ -315,6 +315,7 @@ export function DesktopVideoPlayer({
   const stageClassName = data.fullscreenMode === 'window'
     ? 'kvideo-stage kvideo-web-fullscreen-stage'
     : 'kvideo-stage absolute inset-0';
+  const isMobilePrimaryLayout = isMobile && !isLandscape && !shouldForceLandscape && data.fullscreenMode === 'none';
 
   // Mobile double-tap gesture for skip forward/backward
   const { handleTap } = useDoubleTap({
@@ -443,6 +444,7 @@ export function DesktopVideoPlayer({
 
             <DesktopControlsWrapper
               src={src}
+              isMobilePrimaryLayout={isMobilePrimaryLayout}
               data={data}
               logic={logic}
               refs={refs}

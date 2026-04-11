@@ -2,8 +2,10 @@ import React from 'react';
 import { DesktopProgressBar } from './DesktopProgressBar';
 import { DesktopLeftControls } from './DesktopLeftControls';
 import { DesktopRightControls } from './DesktopRightControls';
+import { MobilePrimaryControls } from '../mobile/MobilePrimaryControls';
 
 interface DesktopControlsProps {
+    isMobilePrimaryLayout: boolean;
     showControls: boolean;
     isPlaying: boolean;
     currentTime: number;
@@ -51,6 +53,19 @@ export function DesktopControls(props: DesktopControlsProps) {
         onProgressTouchStart,
         formatTime,
     } = props;
+    const progressBar = (
+        <DesktopProgressBar
+            progressBarRef={progressBarRef}
+            currentTime={currentTime}
+            duration={duration}
+            bufferedTime={bufferedTime}
+            onProgressClick={onProgressClick}
+            onProgressMouseDown={onProgressMouseDown}
+            onProgressTouchStart={onProgressTouchStart}
+            variant={props.isMobilePrimaryLayout ? 'mobile-primary' : 'default'}
+            className={props.isMobilePrimaryLayout ? 'px-0 pb-0 flex-1' : 'px-4 pb-1'}
+        />
+    );
 
     return (
         <div
@@ -61,24 +76,30 @@ export function DesktopControls(props: DesktopControlsProps) {
                 visibility: showControls ? 'visible' : 'hidden',
             }}
         >
-            {/* Progress Bar */}
-            <DesktopProgressBar
-                progressBarRef={progressBarRef}
-                currentTime={currentTime}
-                duration={duration}
-                bufferedTime={bufferedTime}
-                onProgressClick={onProgressClick}
-                onProgressMouseDown={onProgressMouseDown}
-                onProgressTouchStart={onProgressTouchStart}
-            />
-
-            {/* Controls Bar */}
-            <div className="bg-gradient-to-t from-black/90 via-black/70 to-transparent px-4 pb-4 pt-2">
-                <div className="flex items-center justify-between gap-4">
-                    <DesktopLeftControls {...props} formatTime={formatTime} />
-                    <DesktopRightControls {...props} />
+            {props.isMobilePrimaryLayout ? (
+                <div className="bg-gradient-to-t from-black/90 via-black/72 to-transparent px-4 pb-4 pt-3">
+                    <MobilePrimaryControls
+                        isPlaying={props.isPlaying}
+                        isNativeFullscreen={props.isNativeFullscreen}
+                        currentTime={currentTime}
+                        duration={duration}
+                        formatTime={formatTime}
+                        onTogglePlay={props.onTogglePlay}
+                        onToggleFullscreen={props.onToggleNativeFullscreen}
+                        progressBar={progressBar}
+                    />
                 </div>
-            </div>
+            ) : (
+                <>
+                    {progressBar}
+                    <div className="bg-gradient-to-t from-black/90 via-black/70 to-transparent px-4 pb-4 pt-2">
+                        <div className="flex items-center justify-between gap-4">
+                            <DesktopLeftControls {...props} formatTime={formatTime} />
+                            <DesktopRightControls {...props} />
+                        </div>
+                    </div>
+                </>
+            )}
         </div>
     );
 }

@@ -118,6 +118,38 @@
     cursor: grabbing;
 }
 
+.mobile-primary-time {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: rgba(255, 255, 255, 0.86);
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.btn-icon.mobile-primary-btn {
+    min-width: 2.875rem;
+    width: 2.875rem;
+    height: 2.875rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+}
+
+.slider-track.mobile-primary {
+    height: 10px;
+}
+
+.slider-track.mobile-primary::before {
+    top: -16px;
+    bottom: -12px;
+}
+
+.slider-track.mobile-primary .slider-thumb {
+    width: 18px;
+    height: 18px;
+}
+
 /* ============================================
    LIQUID GLASS VIDEO PLAYER STYLES
    ============================================ */

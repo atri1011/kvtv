@@ -5,12 +5,13 @@ import { useDesktopPlayerLogic } from '../hooks/useDesktopPlayerLogic';
 
 interface DesktopControlsWrapperProps {
     src: string;
+    isMobilePrimaryLayout: boolean;
     data: ReturnType<typeof useDesktopPlayerState>['data'];
     logic: ReturnType<typeof useDesktopPlayerLogic>;
     refs: ReturnType<typeof useDesktopPlayerState>['refs'];
 }
 
-export function DesktopControlsWrapper({ src, data, logic, refs }: DesktopControlsWrapperProps) {
+export function DesktopControlsWrapper({ src, isMobilePrimaryLayout, data, logic, refs }: DesktopControlsWrapperProps) {
     const {
         isPlaying,
         currentTime,
@@ -53,6 +54,7 @@ export function DesktopControlsWrapper({ src, data, logic, refs }: DesktopContro
 
     return (
         <DesktopControls
+            isMobilePrimaryLayout={isMobilePrimaryLayout}
             showControls={showControls}
             isPlaying={isPlaying}
             currentTime={currentTime}
