@@ -43,3 +43,7 @@ next-env.d.ts
 # unused/generated files
 contrast-test-results.json
 .ace-tool/
+.spec-workflow/
+.claude/settings.local.json
+.gitignore
+docs/
